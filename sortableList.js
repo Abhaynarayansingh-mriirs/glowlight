@@ -2,6 +2,8 @@ var SortableList = React.createClass({
   mixins: [SortableMixin],
 
   handleSort(evt) {
+    console.log('moved', evt.oldIndex, evt.newIndex)
+    this.key = (this.key || 0) + 1;
     this.props.onObjMoved(evt.oldIndex, evt.newIndex)
   },
 
@@ -10,13 +12,16 @@ var SortableList = React.createClass({
   },
 
   sortableOptions: {
-    handle: ".handle"
+    handle: ".handle",
+    alwaysRevert: true,
   },
 
+  // key={this.key || 0}
+
   render() {
-      return <ul className="table-view">{
+      return <ul className="table-view reorderable">{
           (this.props.items||[]).map((mate) => {
-              return <li onClick={this.rowClicked} className="table-view-cell" itemID={mate.id}>{mate.name}<div className="handle">#</div></li>
+              return <li key={mate.id} onClick={this.rowClicked} className="table-view-cell clickable" itemID={mate.id}>{mate.name}<div className="handle">#</div></li>
           })
       }</ul>
   }

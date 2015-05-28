@@ -97,7 +97,7 @@
 						_activeComponent = this;
 					}
 					else if (name === 'onAdd' || name === 'onUpdate') {
-						evt.from.insertBefore(evt.item, _nextSibling);
+						// evt.from.insertBefore(evt.item, _nextSibling);
 
 						var newState = {},
 							remoteState = {},
@@ -108,18 +108,18 @@
 							item;
 
 						if (name === 'onAdd') {
-							remoteItems = _getModelItems(_activeComponent);
-							item = remoteItems.splice(oldIndex, 1)[0];
-							items.splice(newIndex, 0, item);
+							// remoteItems = _getModelItems(_activeComponent);
+							// item = remoteItems.splice(oldIndex, 1)[0];
+							// items.splice(newIndex, 0, item);
 
-							remoteState[_getModelName(_activeComponent)] = remoteItems;
+							// remoteState[_getModelName(_activeComponent)] = remoteItems;
 						}
 						else {
-							items.splice(newIndex, 0, items.splice(oldIndex, 1)[0]);
+							// items.splice(newIndex, 0, items.splice(oldIndex, 1)[0]);
 						}
 
-						newState[_getModelName(this)] = items;
-						this.setState(newState);
+						// newState[_getModelName(this)] = items;
+						// this.setState(newState);
 						(this !== _activeComponent) && _activeComponent.setState(remoteState);
 					}
 

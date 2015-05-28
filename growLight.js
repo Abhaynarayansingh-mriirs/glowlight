@@ -1,9 +1,10 @@
 'use strict';
 
 var db;
+var backup = new Firebase("https://sandstore.firebaseio.com/growDB");
 
-if (false && localStorage.db){
-  db = JSON.parse(localStorage.db)
+if (localStorage.growDB){
+  db = JSON.parse(localStorage.growDB)
 } else {
   db = { traits: {}, mates: {}, allMates: [], allTraits: [] }
 }
@@ -21,7 +22,7 @@ var GrowLight = {
   setMate(mateId, data){
     if (!db.mates[mateId]){
       db.allMates.unshift(mateId)
-      db.mates[mateId] = { id: mateId, traits: {} }
+      db.mates[mateId] = { id: mateId, wantsToBe: {} }
     }
     for (var k in data){
       db.mates[mateId][k] = data[k]
@@ -29,11 +30,28 @@ var GrowLight = {
     this.store()
   },
 
-  setTrait(mateId, trait, relation){
-    db.mates[mateId].traits[trait] = relation
-    if (!db.traits[trait]){
-      db.traits[trait] = { id: trait, name: trait }
-      db.allTraits.push(trait)
+  addTrait(t){
+    if (!db.traits[t]){
+      db.traits[t] = { id: t, name: t }
+      db.allTraits.push(t)
+    }
+  },
+
+  setTrait(mateId, wantsToBe, expandsAround){
+    this.addTrait(wantsToBe)
+    if (expandsAround) this.addTrait(expandsAround);
+    var mate = db.mates[mateId];
+    if (!mate.wantsToBe[wantsToBe]) mate.wantsToBe[wantsToBe] = {}
+    if (expandsAround) mate.wantsToBe[wantsToBe][expandsAround] = true;
+    this.store()
+  },
+
+  removeTrait(mateId, wantsToBe, expandsAround){
+    var mate = db.mates[mateId];
+    if (!expandsAround){
+      delete mate.wantsToBe[wantsToBe];
+    } else {
+      delete mate.wantsToBe[wantsToBe][expandsAround];
     }
     this.store()
   },
@@ -51,8 +69,9 @@ var GrowLight = {
 
   // getters
 
-  allTraits(){
-    return db.allTraits.map((id) => db.traits[id])
+  traits(mate){
+    if (!mate) return db.allTraits.map((id) => db.traits[id]);
+    else return this.mate(mate).wantsToBe || {};
   },
 
   allMates(){
@@ -71,9 +90,15 @@ var GrowLight = {
   // lifecycle
 
   store(){
-    localStorage.db = JSON.stringify(db);
+    localStorage.growDB = JSON.stringify(db);
     // console.log('stored!')
     if (GrowLight.onChange) GrowLight.onChange()
+    backup.set(db)
+  },
+
+  clear(){
+    db = { traits: {}, mates: {}, allMates: [], allTraits: [] }
+    this.store()
   }
 
 }

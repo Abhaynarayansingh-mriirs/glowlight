@@ -1,49 +1,76 @@
+'use strict';
+
 var MateCard = React.createClass({
 
-  style(){
-    if (!this.props.mate) return {display:"none"};
-    else return {};
+  add(){
+    var traits = GrowLight.mate(this.props.mate).wantsToBe || {}
+    this.props.navigator.push({
+      class: SelectList,
+      props: {
+        title: "What does " + this.props.mate + " want to be?",
+        navigator: this.props.navigator,
+        options: GrowLight.traits(),
+        selected: traits,
+        onDone: (added,removed) => {
+          added.forEach( (k) => GrowLight.setTrait(this.props.mate, k) )
+          removed.forEach( (k) => GrowLight.removeTrait(this.props.mate, k) )
+        }
+      }
+    })
   },
 
-  addWantsToBeTrait(){
-    var trait = prompt('Trait');
-    GrowLight.setTrait(this.props.mate, trait, 'wantsToBe')
+  addExpandsAroundTrait(evt){
+    var key = evt.currentTarget.getAttribute('itemID')
+    var traits = GrowLight.traits(this.props.mate)
+
+    this.props.navigator.push({
+      class: SelectList,
+      props: {
+        title: "What would help " + this.props.mate + " be " + key + "?",
+        navigator: this.props.navigator,
+        options: GrowLight.traits(),
+        selected: traits[key],
+        onDone: (added,removed) => {
+          added.forEach( (k) => GrowLight.setTrait(this.props.mate, key, k) )
+          removed.forEach( (k) => GrowLight.removeTrait(this.props.mate, key, k) )
+        }
+      }
+    })
   },
 
-  addExpandsAroundTrait(){
-    var trait = prompt('Trait');
-    GrowLight.setTrait(this.props.mate, trait, 'expandsAround')
+  done(){
+    this.props.navigator.pop()
   },
-
-  addExcitedByTrait(){
-    var trait = prompt('Trait');
-    GrowLight.setTrait(this.props.mate, trait, 'excitedBy')
-  },
-
 
   render(){
     if (!this.props.mate) return null;
-    var traits = GrowLight.mate(this.props.mate).traits || {}
+    var traits = GrowLight.mate(this.props.mate).wantsToBe || {}
     console.log(traits);
 
-    return <div style={this.style()}>
-        <div onClick={this.props.onHidden} onTouchEnd={this.props.onHidden} className="hovermodalbackdrop"></div>
-        <div className="hovermodal">
-          <div className="content-padded">
-            <h1>{this.props.mate}</h1>
-          </div>
-
-          <ul className="table-view">{
+    return (
+      <div>
+        <header className="bar bar-nav">
+          <button className="btn pull-right" onClick={this.add}>Add</button>
+          <button className="btn pull-left" onClick={this.done}>Done</button>
+          <h1>{this.props.mate}</h1>
+        </header>
+        <ul className="table-view content">{
             Object.keys(traits).map((t) => {
-              return <li className="table-view-cell"><b>{t}</b> {traits[t]}</li>
+              return (
+                <li
+                  itemID={t}
+                  onClick={this.addExpandsAroundTrait} className="table-view-cell clickable"
+                >
+                  <b>{t}</b>
+                  {Object.keys(traits[t]||{}).join(', ')}
+                </li>
+              )
             })
-          }</ul>
+        }</ul>
 
-          <button className="btn btn-block" onClick={this.addWantsToBeTrait}> wants to be...</button>
-          <button className="btn btn-block" onClick={this.addExpandsAroundTrait}>expands around...</button>
-          <button className="btn btn-block" onClick={this.addExcitedByTrait}>excited by...</button>
-        </div>
+        <button className="btn btn-block" onClick={this.addWantsToBeTrait}> wants to be...</button>
       </div>
+    )
   }
 
 })

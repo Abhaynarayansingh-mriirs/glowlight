@@ -1,3 +1,4 @@
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,minimal-ui" />
 <link rel="apple-touch-icon-precomposed" href="icon.jpg" />
 
@@ -7,7 +8,7 @@
     <link rel="stylesheet" href="ratchet/css/ratchet.css">
     <script src="https://fb.me/react-0.13.3.js"></script>
     <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
-    <script src="http://cdn.jsdelivr.net/sortable/1.2.0/Sortable.js"></script>
+    <script src="Sortable.js"></script>
     <script src="react-sortable-mixin.js"></script>
     <style>
       .hovermodal {
@@ -33,16 +34,26 @@
 
       .handle {
         position: absolute;
-        right: 0px; top: 0px;
-        background: red;
-        height: 44px;
-        width: 44px;
+        right: 0px; top: 0px; bottom: 0px;
+        background: #acf;
+        height: auto;
+        width: 54px;
+      }
+
+      .reorderable .table-view-cell {
+        min-height: 60px;
+      }
+
+      .clickable {
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
     <div id="content"></div>
     <script type="text/jsx;harmony=true" src="sortableList.js"></script>
+    <script type="text/jsx;harmony=true" src="selectList.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
     <script type="text/jsx;harmony=true" src="growLight.js"></script>
     <script type="text/jsx;harmony=true" src="mateCard.js"></script>
     <script type="text/jsx;harmony=true" src="index.js"></script>
