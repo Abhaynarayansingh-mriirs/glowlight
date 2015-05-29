@@ -1,67 +1,34 @@
 'use strict';
 React.initializeTouchEvents(true)
 
-// TO DO:
-
-// * matepage button pushes wantsToBe page to select wantsToBe traits
-// * wantsToBe also
-// * multiselect list widget
-
-// * rename mate using card [5m]
-// * port navigationpush stuff from hindsight widgetry
 
 
 
 var App = React.createClass({
-
   getInitialState() {
-      GrowLight.onChange = () => {
-        this.setState({
-          mates: GrowLight.allMates(),
-          traits: GrowLight.traits()
-        })
-      }
-      return {
-        stack: [],
-        display: 'mates',
-        mates: GrowLight.allMates(),
-        traits: GrowLight.traits()
-      }
+    db.onChange = () => {
+      this.setState({items: db.items})
+    }
+    return {
+      stack: [],
+      items: db.items
+    }
   },
 
   addThing() {
-    if (this.state.display != 'mates') return;
-    var name = prompt('Name:')
-    if (!name) return;
-    GrowLight.setMate(name, {name: name})
-    this.setState({mates: GrowLight.allMates()})
-  },
-
-  mateClicked(targetId){
-    this.push({
-      class: MateCard,
-      props: {
-        mate: targetId,
-        navigator: this
+    this.push(PickList, {
+      options: db.mates(),
+      onPick: (mate) => {
+        this.supplant(DateCard, {
+          dateID: db.store({ mate: mate })
+        })
       }
     })
   },
 
-  mateMoved(oldIndex, newIndex){
-    GrowLight.mateMoved('.', oldIndex, newIndex)
-  },
-
-  traitMoved(oldIndex, newIndex){
-    GrowLight.traitMoved('.', oldIndex, newIndex)
-  },
-
-  toggleDisplay(){
-    this.setState({
-      display: { mates: 'traits', traits: 'mates' }[this.state.display]
-    })
-  },
-
-  push(obj){
+  push(cls, props){
+    var obj = { class: cls, props: props||{} }
+    obj.props.navigator = this
     this.setState({stack: this.state.stack.concat([obj])});
   },
 
@@ -69,35 +36,33 @@ var App = React.createClass({
     this.setState({stack: this.state.stack.slice(0,this.state.stack.length-1)});
   },
 
-  renderContent(){
-    if (this.state.display == 'mates'){
-      return <SortableList onObjMoved={this.mateMoved} items={this.state.mates} onClicked={this.mateClicked} />
-    } else {
-      return <SortableList  onObjMoved={this.traitMoved} items={this.state.traits} />;
-    }
+  supplant(cls, props){
+    var obj = { class: cls, props: props||{} }
+    obj.props.navigator = this
+    this.state.stack[this.state.stack.length - 1] = obj
+    this.setState({stack: this.state.stack});
   },
 
-  clear(){
-    if (!confirm('Clear?')) return;
-    GrowLight.clear();
+  renderModal(){
+    var top = this.state.stack[this.state.stack.length - 1];
+    if (!top) return null;
+    if (top.props.dateID) top.props.date = db.items[top.props.dateID]
+    return React.createElement(top.class, top.props)
+  },
+
+  renderApp(){
+    return <div>
+      <header className="bar bar-nav">
+        <button className="btn pull-right" onClick={this.addThing}>Add</button>
+      </header>
+      <div className="content">
+        <Fate navigator={this}/>
+      </div>
+    </div>
   },
 
   render() {
-    var top = this.state.stack[this.state.stack.length - 1];
-    return (
-      <div>{
-        top && React.createElement(top.class, top.props) || (
-          <div>
-            <header className="bar bar-nav">
-              <button className="btn pull-right" onClick={this.addThing}>Add</button>
-              <button className="btn pull-left" onClick={this.toggleDisplay}>...</button>
-              <h1 onClick={this.clear} className="title clickable">{this.state.display}</h1>
-            </header>
-            <div className="content">{ this.renderContent() }</div>
-          </div>
-        )
-      }</div>
-    )
+    return <div>{ this.renderModal() || this.renderApp() }</div>
   }
 })
 

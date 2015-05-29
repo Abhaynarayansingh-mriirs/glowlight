@@ -4,58 +4,25 @@
 
 <html>
   <head>
-
     <link rel="stylesheet" href="ratchet/css/ratchet.css">
     <script src="https://fb.me/react-0.13.3.js"></script>
     <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
-    <script src="Sortable.js"></script>
-    <script src="react-sortable-mixin.js"></script>
-    <style>
-      .hovermodal {
-        position: absolute;
-        z-index: 1000;
-        top: 20px;
-        left: 10px;
-        right: 10px;
-        border-radius: 10px;
-        background: hsl(0, 0%, 93%);
-        box-shadow: hsl(0, 0%, 0%) 0px 0px 10px;
-      }
-
-      .hovermodalbackdrop {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: hsla(0, 0%, 0%, 0.43);
-        z-index: 99;
-      }
-
-      .handle {
-        position: absolute;
-        right: 0px; top: 0px; bottom: 0px;
-        background: #acf;
-        height: auto;
-        width: 54px;
-      }
-
-      .reorderable .table-view-cell {
-        min-height: 60px;
-      }
-
-      .clickable {
-        cursor: pointer;
-      }
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+    <style media="screen">
+      .clickable { cursor: pointer; }
     </style>
   </head>
   <body>
     <div id="content"></div>
-    <script type="text/jsx;harmony=true" src="sortableList.js"></script>
+
     <script type="text/jsx;harmony=true" src="selectList.js"></script>
-    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
-    <script type="text/jsx;harmony=true" src="growLight.js"></script>
+    <script type="text/jsx;harmony=true" src="pickList.js"></script>
+    <script type="text/jsx;harmony=true" src="tabs.js"></script>
+
+    <script type="text/jsx;harmony=true" src="db.js"></script>
+    <script type="text/jsx;harmony=true" src="fate.js"></script>
     <script type="text/jsx;harmony=true" src="mateCard.js"></script>
+    <script type="text/jsx;harmony=true" src="dateCard.js"></script>
     <script type="text/jsx;harmony=true" src="index.js"></script>
   </body>
 </html>

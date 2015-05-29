@@ -52,8 +52,8 @@ var SelectList = React.createClass({
     return (
       <div>
         <header className="bar bar-nav">
-          <button className="btn pull-right" onClick={this.add}>Add</button>
-          <button className="btn pull-left" onClick={this.done}>Done</button>
+          <button className="btn pull-left" onClick={this.add}>Add</button>
+          <button className="btn pull-right" onClick={this.done}>Done</button>
           <h1>Choose</h1>
         </header>
         <div className="content">
@@ -62,13 +62,13 @@ var SelectList = React.createClass({
               this.state.options.map((option) => {
                 return (
                   <li
-                    key={option.id}
+                    key={option.id || option}
                     onClick={this.toggle}
                     className="table-view-cell clickable"
-                    itemID={option.id}
+                    itemID={option.id || option}
                     >
-                    {option.name}
-                    <div className={this.state.selected[option.id] ? 'toggle active' : 'toggle'}>
+                    {option.name || option}
+                    <div className={this.state.selected[option.id || option] ? 'toggle active' : 'toggle'}>
                       <div className="toggle-handle"></div>
                     </div>
                   </li>
